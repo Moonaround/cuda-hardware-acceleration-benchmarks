@@ -1,57 +1,66 @@
-# 🗺️ Hardware Architecture Block Diagram
+# 🔬 CMOS Transistor-Level Circuit Implementations
 
-This block diagram models how data signals and control vectors route natively through the 4-Bit Arithmetic Logic Unit execution stages on silicon.
+This document supplements the structural Verilog ALU design by mapping the digital logic functions directly onto physical Complementary Metal-Oxide-Semiconductor (CMOS) transistor networks. 
 
-```mermaid
-flowchart TD
-    %% Define Styles and Colors for a clean theme
-    classDef inputs fill:#2d3748,stroke:#4a5568,stroke-width:2px,color:#fff;
-    classDef control fill:#742a2a,stroke:#9b2c2c,stroke-width:2px,color:#fff;
-    classDef logic fill:#1a365d,stroke:#2b6cb0,stroke-width:2px,color:#fff;
-    classDef outputs fill:#1c4532,stroke:#2f855a,stroke-width:2px,color:#fff;
+---
 
-    %% Hardware Input Pins
-    subcontractor_A[input wire [3:0] A]:::inputs
-    subcontractor_B[input wire [3:0] B]:::inputs
-    control_Op[input wire [1:0] Opcode]:::control
+## 🎛️ 1. The Core Inverter (NOT Gate)
+The foundation of CMOS logic. It uses exactly one PMOS transistor in the Pull-Up Network (PUN) and one NMOS transistor in the Pull-Down Network (PDN).
 
-    %% Parallel Processing Circuits
-    subgraph Execution_Blocks [Streaming Execution Blocks]
-        style Execution_Blocks fill:#1a202c,stroke:#4a5568,stroke-width:1px,color:#fff
-        block_ADD[4-Bit Ripple Carry Adder]:::logic
-        block_SUB[4-Bit Subtractor Unit]:::logic
-        block_AND[Bitwise AND Gate Array]:::logic
-        block_OR[Bitwise OR Gate Array]:::logic
-    end
-
-    %% Bus Routing Systems
-    mux_Select{4-to-1 Control Multiplexer}:::control
-
-    %% Hardware Output Pins
-    pin_Result[output reg [3:0] ALU_Result]:::outputs
-    pin_Carry[output reg CarryOut]:::outputs
-
-    %% Signal Pathways Connections
-    subcontractor_A --> block_ADD
-    subcontractor_A --> block_SUB
-    subcontractor_A --> block_AND
-    subcontractor_A --> block_OR
-
-    subcontractor_B --> block_ADD
-    subcontractor_B --> block_SUB
-    subcontractor_B --> block_AND
-    subcontractor_B --> block_OR
-
-    %% Routing Outputs into the Mux
-    block_ADD -->|Sum + Carry| mux_Select
-    block_SUB -->|Difference| mux_Select
-    block_AND -->|Logical AND| mux_Select
-    block_OR  -->|Logical OR|  mux_Select
-
-    %% Control Lines
-    control_Op -->|Select Path| mux_Select
-
-    %% Final Pin Placements
-    mux_Select --> pin_Result
-    mux_Select --> pin_Carry
+### 📐 Circuit Schematic Topology
+```text
+          Vdd (Power)
+           │
+       ┌───┴───┐
+       │      _│_  PMOS (Pull-Up)
+  In ──┴─────┤   │
+             └───┤
+                 ├─────── Out
+             ┌───┤
+       ┌─────┤_  │ NMOS (Pull-Down)
+       │       │ │
+       └───┬───┘
+           │
+          GND (Ground)
 ```
+
+---
+
+## 🛑 2. The 2-Input NAND Gate
+In VLSI layout design, NAND gates are preferred over AND gates because they require fewer manufacturing stages and exhibit lower propagation delay on silicon.
+
+### 📐 Circuit Schematic Topology
+* **Pull-Up Network (PUN):** Two PMOS transistors connected in **Parallel**.
+* **Pull-Down Network (PDN):** Two NMOS transistors connected in **Series**.
+
+```text
+               Vdd (Power)
+                │
+        ┌───────┴───────┐
+        │               │
+       _│_             _│_
+  A ──┤   │       B ──┤   │  (PMOS Parallel Array)
+      └───┤           └───┤
+          └───────┬───────┘
+                  │
+                  ├─────────── Out
+                  │
+                 _│_
+            A ──┤   │        (NMOS Series Stack)
+                └───┤
+                    │
+                   _│_
+              B ──┤   │
+                  └───┤
+                      │
+                     GND
+```
+
+---
+
+## ⚡ 3. Realizing the ALU Bitwise Circuits
+To build the bitwise `AND` logic mapped out in our structural hardware design file (`alu_core.v`), the silicon layout combines the two networks above:
+
+\[\text{AND}(A, B) = \text{NOT}(\text{NAND}(A, B))\]
+
+By feeding the output of our 4-transistor NAND circuit directly into a 2-transistor Inverter circuit, we create a highly optimized **6-Transistor Bitwise AND Block** ready for Very Large Scale Integration (VLSI).
