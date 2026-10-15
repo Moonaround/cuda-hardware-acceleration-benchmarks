@@ -35,10 +35,14 @@ An open-source digital design, parallel arithmetic, and low-level system simulat
 * **Objective:** Deploy signed hardware multiplication routines utilizing sequential logic and arithmetic right shifts (ARS).
 * **Directory Workspace:** [`/04_multi_stage_multiplier`](./04_multi_stage_multiplier)
 
-### 🔹 Lab 05: Open-Source ASIC Physical Design Flow Automation
-* **Objective:** Automate RTL-to-GDSII physical synthesis pipelines to transform structural logic gates into verified silicon layouts.
-* **Architectural Flow:** Emulates the **OpenLane & SkyWater 130nm PDK** toolchain pipeline. Executes logic synthesis, cell floorplanning, clock tree synthesis (CTS), and multi-layer copper grid routing, verifying layout profiles via automated design rule checking (DRC).
+### 🔹 Lab 05: Full-Custom CMOS Silicon Cell Synthesis (Electric VLSI + LTspice)
+* **Objective:** Design, place, and simulate a physical transistor-level standard cell mapping out silicon layouts.
 * **Directory Workspace:** [`/05_vlsi_asic_layout`](./05_vlsi_asic_layout)
+
+### 🔹 Lab 06: Automated DSP Filter Pipeline Verification (Verilog + MATLAB)
+* **Objective:** Construct a hardware-level 3-Tap Signed Finite Impulse Response (FIR) Filter Engine with multi-tool cross-verification.
+* **Architectural Flow:** Leverages a sequence of internal delay pipeline registers and arithmetic multiply-accumulate (MAC) circuitry streams. Utilizes an automated **MATLAB** mathematical synthesis model to generate discrete golden tracking vectors, validating the structural Verilog execution logic.
+* **Directory Workspace:** [`/06_dsp_filter_pipeline`](./06_dsp_filter_pipeline)
 
 ---
 
@@ -50,13 +54,3 @@ This continuous validation playground documents hands-on exposure to practical s
 * **System Design & ECAD Workflows:** Experience with Cadence and KiCad ECAD suites for trace routing and DRC track width enforcement, alongside 3D mechanical modeling via Autodesk.
 * **Embedded Control & Mechatronics:** Practical background in developing Cartesian control loops for multi-axis robotic gantry frameworks and hardware debugging.
 * **Project & Operations Management:** Leadership roles including Project NexWatt student lead for renewable energy storage and institutional chapter treasurer.
-
----
-
-### 🏃‍♂️ Git Terminal Commands:
-```bash
-cd C:\Users\japja\Desktop\gpu\cuba
-git add .
-git commit -m "Phase 5 Complete: Deploy automated ASIC physical design synthesis flow layout and update master project profile"
-git push origin main
-```
